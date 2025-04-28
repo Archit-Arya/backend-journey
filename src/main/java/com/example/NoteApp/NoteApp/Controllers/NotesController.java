@@ -1,6 +1,8 @@
 package com.example.NoteApp.NoteApp.Controllers;
 
 import com.example.NoteApp.NoteApp.Entities.Notes;
+import com.example.NoteApp.NoteApp.Services.NotesService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -8,37 +10,32 @@ import java.util.*;
 @RestController
 @RequestMapping("/notes")
 public class NotesController {
-    Map<String,Notes> notes=new HashMap<>();
+    @Autowired
+    private NotesService service;
 
     @GetMapping("/all")
     public List<Notes> getAll(){
-        List<Notes> resultSet=new ArrayList<>();
-        for(String ids: notes.keySet()){
-            resultSet.add(notes.get(ids));
-        }
-        return resultSet;
+        return service.getAllNotes();
     }
 
     @GetMapping("/getById/{id}")
     public Optional<Notes> getNotesById(@PathVariable String id){
-        return Optional.ofNullable(notes.getOrDefault(id, null));
+        return service.findNotesByID(id);
     }
 
     @PutMapping("/update")
     public void addNotes(@RequestBody Notes note){
-        note.setDate(new Date());
-        notes.put(note.getId(),note);
+        service.Update(note);
     }
 
     @PostMapping("/add")
     public void updateNotes(@RequestBody Notes note){
-        note.setDate(new Date());
-        notes.put(note.getId(),note);
+        service.addNotes(note);
     }
 
     @DeleteMapping("/delete/{myId}")
     public void deleteNotes(@PathVariable String myId){
-        notes.remove(myId);
+        service.delete(myId);
     }
 
 }
